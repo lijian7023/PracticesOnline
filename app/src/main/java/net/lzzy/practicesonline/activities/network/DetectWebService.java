@@ -53,9 +53,7 @@ public class DetectWebService extends Service {
             AppUtils.getExecutor().execute(new Runnable() {
                 @Override
                 public void run() {
-//                    while (true){
-//                        int flag=
-//                    }
+
                     int flag = compareData();
                     if (flag == FLAG_SERVER_EXCEPTION) {
                         notifyUser("服务器无法连接", android.R.drawable.ic_menu_compass, false);
