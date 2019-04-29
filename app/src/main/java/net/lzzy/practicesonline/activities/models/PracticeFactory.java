@@ -41,7 +41,7 @@ public class PracticeFactory {
         }
     }
     public boolean add(Practice practice){
-        if(!isPracticeInDb(practice)){
+        if(isPracticeInDb(practice)){
             return false;
         }
         repository.insert(practice);
@@ -49,7 +49,8 @@ public class PracticeFactory {
     }
     private boolean isPracticeInDb(Practice practice){
         try{
-            return repository.getByKeyword(String.valueOf(practice.getApiId()),
+            String id= String.valueOf(practice.getApiId());
+            return repository.getByKeyword(id,
                     new String[]{Practice.COL_API_ID},true).size()>0;
         }catch (IllegalAccessException|InstantiationException e){
             e.printStackTrace();

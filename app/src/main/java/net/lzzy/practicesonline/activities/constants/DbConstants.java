@@ -9,6 +9,9 @@ import net.lzzy.sqllib.DbPackager;
  * Description:
  */
 public class DbConstants {
+    private DbConstants(){
+        
+    }
     private static final String DB_NAME="practices.db";
     private static final int DB_VERSION=1;
     public  static DbPackager packager=DbPackager
