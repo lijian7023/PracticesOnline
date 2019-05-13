@@ -1,10 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.activities.QuestionActivity">
+    android:orientation="vertical">
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/activity_question_pager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-</android.support.constraint.ConstraintLayout>
+    </androidx.viewpager.widget.ViewPager>
+    <LinearLayout android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent">
+            <TextView android:id="@+id/activity_question_tv_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:textColor="@color/colorPrimary"
+                android:visibility="gone"
+                android:text="点击空白查看解析"/>
+            <LinearLayout android:id="@+id/activity_question_dots"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal"/>
+        </LinearLayout>
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView android:id="@+id/activity_question_tv_view"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:gravity="end|bottom"
+                android:paddingEnd="15sp"
+                android:paddingBottom="15dp"
+                android:background="@drawable/btn_sector_green"
+                style="@style/WhiteBoldText"
+                android:text="看"/>
+            <TextView android:id="@+id/activity_question_tv_commit"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:gravity="end|bottom"
+                android:paddingEnd="15dp"
+                android:paddingBottom="15dp"
+                android:background="@drawable/btn_sector_red"
+                style="@style/WhiteBoldText"
+                android:text="交"/>
+        </FrameLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

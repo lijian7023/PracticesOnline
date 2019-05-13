@@ -354,11 +354,13 @@ public class PracticesFragment extends BaseFragment {
             listener.onPracticeSelected(practice.getId().toString(),practice.getApiId());
             //todo:跳转到Question视图
         }else {
-            new AlertDialog.Builder(getContext())
-                    .setMessage("下载该章节题目吗？")
-                    .setPositiveButton("下载",(dialog,which)->downloadQuestions(practice.getApiId()))
-                    .setNegativeButton("取消",null)
-                    .show();
+                new AlertDialog.Builder(getContext())
+                        .setMessage("下载该章节题目吗？")
+                        .setPositiveButton("下载",(dialog,which)->downloadQuestions(practice.getApiId()))
+                        .setNegativeButton("取消",null)
+                        .show();
+
+
         }
     }
 
@@ -419,5 +421,21 @@ public class PracticesFragment extends BaseFragment {
         adapter.notifyDataSetChanged();
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof PracticeSelectedListener ){
+             listener= (PracticeSelectedListener) context;
+        }else {
+            throw new ClassCastException(context.toString()+"必须实现StateActivityInterface");
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        listener=null;
+        handler.removeCallbacksAndMessages(null);
+        super.onDestroy();
+    }
 
 }
