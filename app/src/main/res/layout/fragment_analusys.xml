@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <net.lzzy.practicesonline.activities.view.BarChartView
+        android:id="@+id/bar_chart"
+        android:layout_width="match_parent"
+        android:paddingTop="20dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:layout_height="match_parent"/>
+    <TextView
+        android:id="@+id/fragment_analusys_cut_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="表"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:layout_margin="20dp"
+        android:background="@drawable/question_back"
+        android:layout_gravity="right|bottom" />
+</FrameLayout>

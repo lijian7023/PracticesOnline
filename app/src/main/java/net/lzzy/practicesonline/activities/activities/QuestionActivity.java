@@ -22,6 +22,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import net.lzzy.practicesonline.R;
 import net.lzzy.practicesonline.activities.fragments.QuestionFragment;
+import net.lzzy.practicesonline.activities.models.FavoriteFactory;
 import net.lzzy.practicesonline.activities.models.Question;
 import net.lzzy.practicesonline.activities.models.QuestionFactory;
 import net.lzzy.practicesonline.activities.models.UserCookies;
@@ -39,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class QuestionActivity extends AppCompatActivity {
+    public static final int COLLECT_RESULT_CODE = 3;
     private static final int RESULT_ok=1;
     private static final int RESULT_ERROR =2;
     public static final String EXTRA_PRACTICE_ID = "extraPracticeId";
@@ -100,12 +102,44 @@ public class QuestionActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_PRACTICE_ID,practiceId);
         intent.putParcelableArrayListExtra(EXTRA_RESULT,(ArrayList<? extends Parcelable>)results);
         startActivityForResult(intent, REQUEST_CODE_RESULT);
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode==REQUEST_CODE_RESULT&&
+                resultCode==ResultActivity.RESULT_CODE&&data!=null){
+            assert data != null;
+            int pos=data.getIntExtra(ResultActivity.POSITION,-1);
+            pager.setCurrentItem(pos);
+        }
+
+        if (requestCode == REQUEST_CODE_RESULT && resultCode == COLLECT_RESULT_CODE &&data!=null){
+            String pId=data.getStringExtra(ResultActivity.PRACTICE_ID);
+            if (!pId.isEmpty()){
+                List<Question> questionList=new ArrayList<>();
+                FavoriteFactory factory=FavoriteFactory.getInstance();
+                for (Question question:QuestionFactory.getInstance().getByPractice(pId)){
+                    if (factory.isQuestionStarred(question.getId().toString())){
+                        questionList.add(question);
+                    }
+                }
+                questions.clear();
+                questions.addAll(questionList);
+                initDots();
+                adapter.notifyDataSetChanged();
+                if (questions.size()>0){
+                    pager.setCurrentItem(0);
+                    refreshDots(0);
+                }
+            }
+        }
+
+
     }
+
     //region提交成绩
 
     String info;
@@ -134,6 +168,7 @@ public class QuestionActivity extends AppCompatActivity {
                     int r=PracticeService.postResult(result);
                     if (r>=200&&r<=220){
                         handler.sendEmptyMessage(RESULT_ok);
+
                     }else {
                         handler.sendEmptyMessage(RESULT_ERROR);
                     }
@@ -145,23 +180,40 @@ public class QuestionActivity extends AppCompatActivity {
         });
     }
 
-    private AbstractStaticHandler<QuestionActivity> handler=new AbstractStaticHandler<QuestionActivity>(this) {
+    private CountHandler handler = new CountHandler(this);
+
+    private class CountHandler extends AbstractStaticHandler<QuestionActivity> {
+        CountHandler(QuestionActivity context) {
+            super(context);
+        }
+
+        /**
+         * 处理信息的业务逻辑
+         *
+         * @param msg              message对象
+         * @param questionActivity activity or fragment对象
+         */
         @Override
         public void handleMessage(Message msg, QuestionActivity questionActivity) {
-            switch (msg.what){
+
+            switch (msg.what) {
                 case RESULT_ok:
-                    questionActivity.isCommitted=true;
-                    Toast.makeText(questionActivity,"提交成功",Toast.LENGTH_LONG).show();
+                    isCommitted = true;
+                    Toast.makeText(questionActivity, "提交成功", Toast.LENGTH_SHORT).show();
+                    UserCookies.getInstance().commitPractice(questionActivity.practiceId);
+                    questionActivity.redirect();
                     break;
                 case RESULT_ERROR:
+                    Toast.makeText(questionActivity, "提交失败", Toast.LENGTH_SHORT).show();
                     break;
                 default:
                     break;
             }
         }
-    };
 
-    //endregion
+    }
+
+        //endregion
 
     private void initDots() {
         int count=questions.size();
@@ -203,7 +255,7 @@ public class QuestionActivity extends AppCompatActivity {
             tvCommit.setVisibility(View.VISIBLE);
             tvHint.setVisibility(View.GONE);
         }
-         adapter = new FragmentStatePagerAdapter(getSupportFragmentManager()) {
+        adapter = new FragmentStatePagerAdapter(getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
                 Question question = questions.get(position);
